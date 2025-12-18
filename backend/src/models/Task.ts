@@ -1,13 +1,29 @@
-import { Schema, model } from "mongoose"
+import { Schema, model, Types } from "mongoose";
 
-const taskSchema = new Schema({
-  title: String,
-  description: String,
-  dueDate: Date,
-  priority: String,
-  status: String,
-  creatorId: Schema.Types.ObjectId,
-  assignedToId: Schema.Types.ObjectId
-}, { timestamps: true })
+export interface TaskDocument {
+  title: string;
+  description?: string;
+  dueDate?: Date;
+  priority: string;
+  status: string;
+  creatorId: Types.ObjectId; 
+  assignedToId?: Types.ObjectId;
+}
 
-export default model("Task", taskSchema)
+const taskSchema = new Schema<TaskDocument>(
+  {
+    title: { type: String, required: true },
+    description: String,
+    dueDate: Date,
+    priority: { type: String, required: true },
+    status: { type: String, required: true },
+    creatorId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+    },
+    assignedToId: Schema.Types.ObjectId,
+  },
+  { timestamps: true }
+);
+
+export const TaskModel = model<TaskDocument>("Task", taskSchema);

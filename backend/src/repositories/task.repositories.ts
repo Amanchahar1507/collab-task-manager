@@ -1,17 +1,30 @@
-import Task from "../models/Task.js"
+import { TaskModel } from "../models/Task.js";
+import type { TaskDocument } from "../models/Task.js";
+import { Types } from "mongoose";
 
-export const createTask = (data: any) => Task.create(data)
+export const createTask = async (
+  data: Omit<TaskDocument, "creatorId"> & { creatorId: string }
+): Promise<TaskDocument> => {
+  return TaskModel.create({
+    ...data,
+    creatorId: new Types.ObjectId(data.creatorId),
+  });
+};
 
-export const getUserTasks = (userId: string) =>
-  Task.find({
-    $or: [{ creatorId: userId }, { assignedToId: userId }]
-  })
+export const getUserTasks = async (userId: string) => {
+  return TaskModel.find({ creatorId: userId });
+};
 
-export const getOverdueTasks = () =>
-  Task.find({ dueDate: { $lt: new Date() }, status: { $ne: "Completed" } })
+export const getOverdueTasks = async () => {
+  return TaskModel.find({
+    dueDate: { $lt: new Date() },
+  });
+};
 
-export const updateTask = (id: string, data: any) =>
-  Task.findByIdAndUpdate(id, data, { new: true })
+export const updateTask = async (id: string, data: Partial<TaskDocument>) => {
+  return TaskModel.findByIdAndUpdate(id, data, { new: true });
+};
 
-export const deleteTask = (id: string) =>
-  Task.findByIdAndDelete(id)
+export const deleteTask = async (id: string) => {
+  return TaskModel.findByIdAndDelete(id);
+};
