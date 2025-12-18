@@ -3,3 +3,9 @@ export interface Task {
   title: string;
   status: "todo" | "in-progress" | "done";
 }
+export interface CreateTaskPayload {
+  title: string;
+  status: "todo" | "in-progress" | "done";
+}
+
+export type UpdateTaskPayload = Partial<CreateTaskPayload>;
