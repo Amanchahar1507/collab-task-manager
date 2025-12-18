@@ -1,22 +1,57 @@
-import * as repo from "../repositories/task.repositories.js"
+import * as repo from "../repositories/task.repositories.js";
+import { Types } from "mongoose";
+import type { TaskDocument } from "../models/Task.js";
 
-export const createTaskService = async (data: any, userId: string) => {
-  return repo.createTask({
-    ...data,
-    creatorId: userId
-  })
+export interface CreateTaskDTO {
+  title: string;
+  description?: string;
+  dueDate?: string;           
+  priority: string;
+  status: string;
+  assignedToId?: string;        
 }
+
+export const createTaskService = async (
+  data: CreateTaskDTO,
+  userId: string
+): Promise<TaskDocument> => {
+  return repo.createTask({
+    title: data.title,
+    description: data.description,
+    priority: data.priority,
+    status: data.status,
+    dueDate: data.dueDate ? new Date(data.dueDate) : undefined, 
+    creatorId: new Types.ObjectId(userId),
+    assignedToId: data.assignedToId
+      ? new Types.ObjectId(data.assignedToId)
+      : undefined,
+  });
+};
 
 export const getDashboardTasks = async (userId: string) => {
-  const tasks = await repo.getUserTasks(userId)
-  const overdue = await repo.getOverdueTasks()
-  return { tasks, overdue }
-}
+  return {
+    tasks: await repo.getUserTasks(userId),
+    overdue: await repo.getOverdueTasks(),
+  };
+};
 
-export const updateTaskService = async (id: string, data: any) => {
-  return repo.updateTask(id, data)
-}
+export const updateTaskService = async (
+  id: string,
+  data: Partial<CreateTaskDTO>
+): Promise<TaskDocument> => {
+  const task = await repo.updateTask(id, {
+    ...data,
+    dueDate: data.dueDate ? new Date(data.dueDate) : undefined,
+    assignedToId: data.assignedToId
+      ? new Types.ObjectId(data.assignedToId)
+      : undefined,
+  });
+
+  if (!task) throw new Error("Task not found");
+  return task;
+};
 
 export const deleteTaskService = async (id: string) => {
-  return repo.deleteTask(id)
-}
+  const task = await repo.deleteTask(id);
+  if (!task) throw new Error("Task not found");
+};

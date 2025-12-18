@@ -11,6 +11,11 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: "*", credentials: true },
 });
+io.on("connection", socket => {
+  socket.on("join", userId => {
+    socket.join(userId)
+  })
+})
 
 app.set("io", io);
 

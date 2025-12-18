@@ -6,7 +6,7 @@ export interface TaskDocument {
   dueDate?: Date;
   priority: string;
   status: string;
-  creatorId: Types.ObjectId; 
+  creatorId: Types.ObjectId;
   assignedToId?: Types.ObjectId;
 }
 
@@ -17,10 +17,7 @@ const taskSchema = new Schema<TaskDocument>(
     dueDate: Date,
     priority: { type: String, required: true },
     status: { type: String, required: true },
-    creatorId: {
-      type: Schema.Types.ObjectId,
-      required: true,
-    },
+    creatorId: { type: Schema.Types.ObjectId, required: true },
     assignedToId: Schema.Types.ObjectId,
   },
   { timestamps: true }
