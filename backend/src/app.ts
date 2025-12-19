@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser"
 import taskRoutes from "./routes/task.routes.js"
 import authRoutes from "./routes/auth.routes.js"
 import notificationRoutes from "./routes/notification.routes.js"
+import userRoutes from "./routes/user.routes.js"
 
 
 
@@ -13,6 +14,7 @@ app.use(express.json())
 app.use(cookieParser())
 
 
+app.use("/api/users", userRoutes)
 app.use("/api/notifications", notificationRoutes)
 app.use("/api/auth", authRoutes)
 app.use("/api/tasks", taskRoutes)
