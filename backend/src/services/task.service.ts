@@ -55,3 +55,16 @@ export const deleteTaskService = async (id: string) => {
   const task = await repo.deleteTask(id);
   if (!task) throw new Error("Task not found");
 };
+
+
+export const getUserDashboardService = async (userId: string) => {
+  const created = await repo.getTasksCreatedByUser(userId)
+  const assigned = await repo.getTasksAssignedToUser(userId)
+  const overdue = await repo.getOverdueTasksForUser(userId)
+
+  return {
+    created,
+    assigned,
+    overdue
+  }
+}

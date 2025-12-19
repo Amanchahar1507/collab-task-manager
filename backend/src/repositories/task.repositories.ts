@@ -25,3 +25,18 @@ export const updateTask = async (
 export const deleteTask = async (id: string) => {
   return TaskModel.findByIdAndDelete(id);
 };
+
+
+
+export const getTasksCreatedByUser = (userId: string) =>
+  TaskModel.find({ creatorId: userId })
+
+export const getTasksAssignedToUser = (userId: string) =>
+  TaskModel.find({ assignedToId: userId })
+
+export const getOverdueTasksForUser = (userId: string) =>
+  TaskModel.find({
+    assignedToId: userId,
+    dueDate: { $lt: new Date() },
+    status: { $ne: "Completed" }
+  })
