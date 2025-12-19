@@ -1,6 +1,7 @@
 import type { Task } from "./task";
 
 export interface DashboardResponse {
-  tasks: Task[];
+  created: Task[];
+  assigned: Task[];
   overdue: Task[];
 }

@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
-import { useQueryClient } from "@tanstack/react-query"
 import { useDashboard } from "../hooks/useDashboard"
 import { socket } from "../socket"
-import Notifications from "../components/Notifications"
+import { useQueryClient } from "@tanstack/react-query"
 
 const statuses = ["All", "To Do", "In Progress", "Review", "Completed"]
 const priorities = ["All", "Low", "Medium", "High", "Urgent"]
@@ -15,130 +14,133 @@ export default function Dashboard() {
   const [priority, setPriority] = useState("All")
   const [sort, setSort] = useState("asc")
 
-  const userId = data?.tasks?.[0]?.creatorId || ""
-
   useEffect(() => {
-    socket.emit("join", userId)
-
-    socket.on("task:created", () => qc.invalidateQueries({ queryKey: ["dashboard"] }))
-    socket.on("task:updated", () => qc.invalidateQueries({ queryKey: ["dashboard"] }))
-
+    socket.on("task:updated", () =>
+      qc.invalidateQueries({ queryKey: ["dashboard"] })
+    )
     return () => {
-      socket.off("task:created")
       socket.off("task:updated")
     }
-  }, [userId])
+  }, [])
 
-  const filteredTasks = useMemo(() => {
-    if (!data?.tasks) return []
+  const createdTasks = useMemo(() => {
+    if (!data?.created) return []
 
-    let tasks = [...data.tasks]
+    let list = [...data.created]
 
     if (status !== "All") {
-      tasks = tasks.filter(t => t.status === status)
+      list = list.filter(t => t.status === status)
     }
 
     if (priority !== "All") {
-      tasks = tasks.filter(t => t.priority === priority)
+      list = list.filter(t => t.priority === priority)
     }
 
-    tasks.sort((a, b) =>
+    list.sort((a, b) =>
       sort === "asc"
-        ? new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
-        : new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime()
+        ? new Date(a.dueDate ?? 0).getTime() -
+          new Date(b.dueDate ?? 0).getTime()
+        : new Date(b.dueDate ?? 0).getTime() -
+          new Date(a.dueDate ?? 0).getTime()
     )
 
-    return tasks
+    return list
+  }, [data, status, priority, sort])
+
+  const assignedTasks = useMemo(() => {
+    if (!data?.assigned) return []
+
+    let list = [...data.assigned]
+
+    if (status !== "All") {
+      list = list.filter(t => t.status === status)
+    }
+
+    if (priority !== "All") {
+      list = list.filter(t => t.priority === priority)
+    }
+
+    list.sort((a, b) =>
+      sort === "asc"
+        ? new Date(a.dueDate ?? 0).getTime() -
+          new Date(b.dueDate ?? 0).getTime()
+        : new Date(b.dueDate ?? 0).getTime() -
+          new Date(a.dueDate ?? 0).getTime()
+    )
+
+    return list
   }, [data, status, priority, sort])
 
   if (isLoading) {
-    return (
-      <div className="p-6 space-y-4">
-        <div className="h-6 w-40 bg-gray-200 animate-pulse" />
-        <div className="h-24 bg-gray-200 animate-pulse" />
-      </div>
-    )
+    return <div className="p-6">Loading...</div>
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <Notifications userId={userId} />
+    <div className="p-6 space-y-8 bg-gray-50 min-h-screen">
+      <h1 className="text-2xl font-semibold">Dashboard</h1>
 
-      <h1 className="text-2xl font-semibold mb-6">Dashboard</h1>
-
-      <div className="flex flex-wrap gap-4 mb-6">
-        <select
-          value={status}
-          onChange={e => setStatus(e.target.value)}
-          className="border p-2 rounded"
-        >
+      <div className="flex gap-4">
+        <select className="border p-2" onChange={e => setStatus(e.target.value)}>
           {statuses.map(s => (
             <option key={s}>{s}</option>
           ))}
         </select>
 
-        <select
-          value={priority}
-          onChange={e => setPriority(e.target.value)}
-          className="border p-2 rounded"
-        >
+        <select className="border p-2" onChange={e => setPriority(e.target.value)}>
           {priorities.map(p => (
             <option key={p}>{p}</option>
           ))}
         </select>
 
-        <select
-          value={sort}
-          onChange={e => setSort(e.target.value)}
-          className="border p-2 rounded"
-        >
+        <select className="border p-2" onChange={e => setSort(e.target.value)}>
           <option value="asc">Due Date ↑</option>
           <option value="desc">Due Date ↓</option>
         </select>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-4">
-          <h2 className="text-lg font-medium">Tasks</h2>
-
-          {filteredTasks.length === 0 && (
-            <div className="text-gray-400">No tasks found</div>
-          )}
-
-          {filteredTasks.map(task => (
-            <div
-              key={task._id}
-              className="bg-white p-4 rounded shadow-sm flex justify-between"
-            >
-              <div>
-                <div className="font-medium">{task.title}</div>
-                <div className="text-sm text-gray-500">
-                  {task.status} • {task.priority}
-                </div>
-              </div>
-              <div className="text-sm text-gray-400">
-                {new Date(task.dueDate).toLocaleDateString()}
-              </div>
+      <section>
+        <h2 className="text-lg font-medium mb-2">Tasks Created By Me</h2>
+        {createdTasks.map(task => (
+          <div key={task._id} className="bg-white p-4 rounded mb-2">
+            <div>{task.title}</div>
+            <div className="text-sm text-gray-500">{task.status}</div>
+            <div className="text-sm text-gray-400">
+              {task.dueDate
+                ? new Date(task.dueDate).toLocaleDateString()
+                : "-"}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </section>
 
-        <div className="space-y-4">
-          <h2 className="text-lg font-medium text-red-600">Overdue</h2>
-
-          {data?.overdue.map(task => (
-            <div
-              key={task._id}
-              className="bg-red-50 border border-red-200 p-4 rounded"
-            >
-              <div className="font-medium">{task.title}</div>
-              <div className="text-sm text-red-600">
-                Due {new Date(task.dueDate).toLocaleDateString()}
-              </div>
+      <section>
+        <h2 className="text-lg font-medium mb-2">Tasks Assigned To Me</h2>
+        {assignedTasks.map(task => (
+          <div key={task._id} className="bg-white p-4 rounded mb-2">
+            <div>{task.title}</div>
+            <div className="text-sm text-gray-500">{task.status}</div>
+            <div className="text-sm text-gray-400">
+              {task.dueDate
+                ? new Date(task.dueDate).toLocaleDateString()
+                : "-"}
             </div>
-          ))}
-        </div>
-      </div>
+          </div>
+        ))}
+      </section>
+
+      <section>
+        <h2 className="text-lg font-medium text-red-600 mb-2">Overdue Tasks</h2>
+        {data?.overdue.map(task => (
+          <div key={task._id} className="bg-red-50 p-4 rounded mb-2">
+            <div>{task.title}</div>
+            <div className="text-sm text-red-600">
+              {task.dueDate
+                ? `Due ${new Date(task.dueDate).toLocaleDateString()}`
+                : "No due date"}
+            </div>
+          </div>
+        ))}
+      </section>
     </div>
   )
 }
