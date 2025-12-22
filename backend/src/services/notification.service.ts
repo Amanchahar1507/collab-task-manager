@@ -1,4 +1,4 @@
-import * as repo from "../repositories/Notification.repository.js"
+import * as repo from "../repositories/notification.repository.js"
 
 export const notifyAssignment = async (userId: string, title: string) => {
   return repo.createNotification({
