@@ -4,6 +4,10 @@ A full-stack, production-ready **Collaborative Task Management Application** bui
 The app supports **user authentication**, **task CRUD operations**, **real-time collaboration**, and **instant notifications** using Socket.io.
 
 ---
+## Live Link 
+
+https://collab-task-manager-f.onrender.com
+
 
 ## 🎯 Objective
 
