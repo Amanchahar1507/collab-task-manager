@@ -1,37 +1,28 @@
-import { useEffect } from "react";
-import { useNotifications } from "../hooks/useNotifications";
-import { socket } from "../socket";
-import { useQueryClient } from "@tanstack/react-query";
+import type { Notification } from "../types/notification"
 
-interface NotificationsProps {
-  userId: string;
+interface Props {
+  notifications: Notification[]
 }
 
-export default function Notifications({ userId }: NotificationsProps) {
-  const qc = useQueryClient();
-  const { data } = useNotifications();
-
-  useEffect(() => {
-    if (!userId) return;
-
-    socket.emit("join", userId);
-
-    socket.on("notification:new", () => {
-      qc.invalidateQueries({ queryKey: ["notifications"] });
-    });
-
-    return () => {
-      socket.off("notification:new");
-    };
-  }, [userId, qc]);
+export default function Notifications({ notifications }: Props) {
+  if (notifications.length === 0) {
+    return (
+      <div className="text-sm text-gray-500">
+        No notifications
+      </div>
+    )
+  }
 
   return (
-    <div className="fixed top-4 right-4 w-80 bg-white shadow">
-      {data?.map((n) => (
-        <div key={n._id} className="p-3 border-b">
+    <div className="space-y-2">
+      {notifications.map((n: Notification) => (
+        <div
+          key={n._id}
+          className="bg-indigo-50 border border-indigo-200 text-indigo-800 text-sm p-2 rounded"
+        >
           {n.message}
         </div>
       ))}
     </div>
-  );
+  )
 }
