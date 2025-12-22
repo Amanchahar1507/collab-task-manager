@@ -2,31 +2,39 @@ export type TaskStatus =
   | "To Do"
   | "In Progress"
   | "Review"
-  | "Completed";
+  | "Completed"
 
 export type TaskPriority =
   | "Low"
   | "Medium"
   | "High"
-  | "Urgent";
+  | "Urgent"
 
 export interface Task {
-  _id: string;
-  title: string;
-  status: TaskStatus;
-  priority: TaskPriority;      
-  dueDate: string;             
-  creatorId: string;
-  assignedToId?: string;
+  _id: string
+  title: string
+  description: string
+  dueDate?: string
+  status: TaskStatus
+  priority: TaskPriority
+  creatorId: string
+  assignedToId: string
 }
-
 
 export interface CreateTaskPayload {
-  title: string;
-  status: TaskStatus;
-  priority: TaskPriority;
-  dueDate: string;
-  assignedToId?: string;
+  title: string
+  description: string
+  dueDate?: string
+  status: TaskStatus
+  priority: TaskPriority
+  assignedToId: string
 }
 
-export type UpdateTaskPayload = Partial<CreateTaskPayload>;
+export interface UpdateTaskPayload {
+  title?: string
+  description?: string
+  dueDate?: string
+  status?: TaskStatus
+  priority?: TaskPriority
+  assignedToId?: string
+}

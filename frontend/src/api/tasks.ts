@@ -18,3 +18,6 @@ export const createTask = (data: CreateTaskPayload) =>
 
 export const updateTask = (id: string, data: UpdateTaskPayload) =>
   api.patch<Task>(`/tasks/${id}`, data);
+
+export const deleteTask = (id: string) =>
+  api.delete(`/tasks/${id}`)

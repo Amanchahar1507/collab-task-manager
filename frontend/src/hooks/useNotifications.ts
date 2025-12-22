@@ -1,13 +1,24 @@
-import { useQuery } from "@tanstack/react-query";
-import { api } from "../api/client";
-import type { Notification } from "../types/notification";
+import { useEffect, useState } from "react"
+import { socket } from "../socket"
+
+export interface Notification {
+  _id: string
+  message: string
+  createdAt: string
+}
 
 export const useNotifications = () => {
-  return useQuery<Notification[]>({
-    queryKey: ["notifications"],
-    queryFn: async () => {
-      const res = await api.get<Notification[]>("/notifications");
-      return res.data;
-    },
-  });
-};
+  const [notifications, setNotifications] = useState<Notification[]>([])
+
+  useEffect(() => {
+    socket.on("notification:new", (notification: Notification) => {
+      setNotifications(prev => [notification, ...prev])
+    })
+
+    return () => {
+      socket.off("notification:new")
+    }
+  }, [])
+
+  return notifications
+}
