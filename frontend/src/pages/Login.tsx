@@ -21,42 +21,48 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-600">
-      <div className="bg-white w-96 p-6 rounded-lg shadow-lg space-y-4">
-        <h1 className="text-2xl font-semibold text-center text-gray-800">
-          Welcome Back
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 space-y-6">
+        <h1 className="text-3xl font-bold text-center text-gray-800">
+          Welcome Back 👋
         </h1>
 
+        <p className="text-center text-gray-500 text-sm">
+          Login to manage your tasks
+        </p>
+
         {error && (
-          <div className="bg-red-100 text-red-600 p-2 rounded text-sm">
+          <div className="bg-red-100 text-red-600 p-3 rounded text-sm">
             {error}
           </div>
         )}
 
         <input
-          className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none"
           placeholder="Email"
+          value={email}
           onChange={e => setEmail(e.target.value)}
         />
 
         <input
-          className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
           type="password"
+          className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-indigo-500 outline-none"
           placeholder="Password"
+          value={password}
           onChange={e => setPassword(e.target.value)}
         />
 
         <button
           disabled={loading}
           onClick={submit}
-          className="bg-indigo-600 text-white w-full p-2 rounded hover:bg-indigo-700 transition disabled:opacity-50"
+          className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition disabled:opacity-50"
         >
           {loading ? "Logging in..." : "Login"}
         </button>
 
         <p className="text-sm text-center text-gray-600">
           Don’t have an account?{" "}
-          <a href="/signup" className="text-indigo-600 hover:underline">
+          <a href="/signup" className="text-indigo-600 font-medium hover:underline">
             Sign up
           </a>
         </p>

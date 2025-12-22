@@ -32,35 +32,39 @@ export default function Signup() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 to-pink-600">
-      <div className="bg-white w-96 p-6 rounded-lg shadow-lg space-y-4">
-        <h1 className="text-2xl font-semibold text-center text-gray-800">
-          Create Account
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-600 via-purple-600 to-indigo-600 px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-8 space-y-6">
+        <h1 className="text-3xl font-bold text-center text-gray-800">
+          Create Account 🚀
         </h1>
 
+        <p className="text-center text-gray-500 text-sm">
+          Join and start collaborating
+        </p>
+
         {error && (
-          <div className="bg-red-100 text-red-600 p-2 rounded text-sm">
+          <div className="bg-red-100 text-red-600 p-3 rounded text-sm">
             {error}
           </div>
         )}
 
         <input
-          className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-pink-500"
+          className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-pink-500 outline-none"
           placeholder="Full Name"
           value={name}
           onChange={e => setName(e.target.value)}
         />
 
         <input
-          className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-pink-500"
+          className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-pink-500 outline-none"
           placeholder="Email"
           value={email}
           onChange={e => setEmail(e.target.value)}
         />
 
         <input
-          className="border p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-pink-500"
           type="password"
+          className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-pink-500 outline-none"
           placeholder="Password"
           value={password}
           onChange={e => setPassword(e.target.value)}
@@ -69,14 +73,14 @@ export default function Signup() {
         <button
           disabled={loading}
           onClick={submit}
-          className="bg-pink-600 text-white w-full p-2 rounded hover:bg-pink-700 transition disabled:opacity-50"
+          className="w-full bg-pink-600 text-white py-3 rounded-lg font-medium hover:bg-pink-700 transition disabled:opacity-50"
         >
           {loading ? "Creating..." : "Sign Up"}
         </button>
 
         <p className="text-sm text-center text-gray-600">
           Already have an account?{" "}
-          <a href="/" className="text-pink-600 hover:underline">
+          <a href="/" className="text-pink-600 font-medium hover:underline">
             Login
           </a>
         </p>
